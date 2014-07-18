@@ -1,0 +1,87 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/core-ajax/core-ajax.html">
+<link rel="import" href="../bower_components/core-selector/core-selector.html">
+<link rel="import" href="repo-card.html">
+
+<polymer-element name="repo-list" attributes="show url" noscript>
+<template>
+
+<style>
+:host {
+  display: block;
+  width: 100%;
+}
+repo-card {
+  margin-bottom: 30px;
+}
+
+a {color: #03A9F4; text-decoration: none;}
+a:hover {color: #03A9F4; text-decoration: underline;}
+
+.item.core-selected {
+   color: red;
+}
+</style>
+
+<core-ajax url="{{url}}" auto on-core-response="{{handleResponse}}"></core-ajax>
+
+<div layout vertical center>
+
+  <core-selector id="selector">
+  <template repeat="{{repo, i in repos}}">
+    <span class="item" on-click="{{onClickPage}}"> {{i + 1}} </span>
+  </template>
+  </core-selector>
+  <br/>
+
+  <template repeat="{{repo in repos[page]}}">
+  <repo-card hidden?="{{show == 'library' && !repo.library}}">
+  <!--<img src="../data/github.png">-->
+  <img src="{{repo.owner.avatar_url}}" width="70px" height="70px">
+  <h2>
+    <a target="about:_blank" href="{{repo.html_url}}">{{repo.full_name}}</a>
+    <small>★ ({{repo.stargazers_count}})</small>
+  </h2>
+  <p>{{repo.description}}</p>
+  <table style="width: 100%">
+    <tr>
+      <td style="width: 15%">Author</td>
+      <td><a target="about:_blank" href="{{repo.owner.html_url}}">{{repo.owner.login}}</a></td>
+    </tr>
+    <tr hidden?="{{!repo.homepage}}">
+      <td>Homepage</td>
+      <td><a target="about:_blank" href="{{repo.homepage}}">{{repo.homepage}}</a></td>
+    </tr>
+    <tr>
+      <td>Language</td>
+      <td>{{repo.language}}</td>
+    </tr>
+  </table>
+  </repo-card>
+  </template>
+
+</div>
+</template>
+
+<script>
+Polymer('repo-list', {
+  perPage : 20,
+  ready: function() {
+    this.page = 0;
+  },
+  handleResponse: function(event, result) {
+    var data = [];
+    var idx = 0;
+    for (var i = 0; i < result.response.length; i += this.perPage) {
+      var beg = i;
+      var end = i + this.perPage;
+      data[idx++] = result.response.slice(beg, end);
+    }
+    this.repos = data;
+  },
+  onClickPage: function(event, detail, sender) {
+    this.page = parseInt(sender.innerText) - 1;
+  }
+});
+</script>
+</polymer-element>

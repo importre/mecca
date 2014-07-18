@@ -1,0 +1,25 @@
+{
+  "name": "ghc",
+  "version": "0.1.0",
+  "authors": [
+    "Jaewe Heo <jaeweheo@gmail.com>"
+  ],
+  "description": "Github Categorizer",
+  "keywords": [
+    "github"
+  ],
+  "license": "BSD",
+  "homepage": "http://importre.github.io/ghc",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "octicons": "*",
+    "core-elements": "Polymer/core-elements#~0.3.4",
+    "paper-elements": "Polymer/paper-elements#~0.3.4"
+  }
+}
