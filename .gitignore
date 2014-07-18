@@ -1,3 +1,5 @@
 *.swp
 mecca
 data/
+bower_components
+node_modules
