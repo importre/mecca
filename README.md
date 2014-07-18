@@ -42,7 +42,7 @@ android fork:true stars:>=<The number of stars>
 "compileSdkVersion android-l" extension:gradle language:groovy repo:<Repository Name>
 ```
 
-### Wearable
+#### Wearable
 ```
 "com.google.android.support:wearable" extension:gradle language:groovy repo:<Repository Name>
 ```
