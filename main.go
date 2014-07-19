@@ -33,14 +33,14 @@ func dumpAndroidRepos() {
 	android := NewAndroidCrawler()
 	reposList := android.FindRepos(*stars)
 
-	repos := reposList[0]
+	appRepos := reposList[0]
 	libRepos := reposList[1]
 	lRepos := reposList[2]
 	wearRepos := reposList[3]
 
 	outDir := "data"
 	os.Mkdir(outDir, 0755)
-	android.DumpToJson(outDir+"/android.json", repos)
+	android.DumpToJson(outDir+"/app_repos.json", appRepos)
 	android.DumpToJson(outDir+"/lib_repos.json", libRepos)
 	android.DumpToJson(outDir+"/l_repos.json", lRepos)
 	android.DumpToJson(outDir+"/wear_repos.json", wearRepos)

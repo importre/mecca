@@ -65,13 +65,13 @@ func (self *AndroidCrawler) DumpToJson(path string, repos []AndroidRepository) {
 }
 
 // FindRepos returns AndroidRepository list.
-// 0: all repositories
+// 0: app repositories
 // 1: library repositories
 // 2: android-l repositories
 // 3: wearable repositories
 func (self *AndroidCrawler) FindRepos(stars int) [4][]AndroidRepository {
 	capacity := 100
-	repos := make([]AndroidRepository, 0, capacity)     // all repos
+	appRepos := make([]AndroidRepository, 0, capacity)  // app repos
 	libRepos := make([]AndroidRepository, 0, capacity)  // library repos
 	lRepos := make([]AndroidRepository, 0, capacity)    // android-l repos
 	wearRepos := make([]AndroidRepository, 0, capacity) // wearable repos
@@ -125,10 +125,11 @@ func (self *AndroidCrawler) FindRepos(stars int) [4][]AndroidRepository {
 			}
 
 			self.removeUnnecessaryFeatures(&androidRepo)
-			repos = append(repos, androidRepo)
 
 			if library {
 				libRepos = append(libRepos, androidRepo)
+			} else {
+				appRepos = append(appRepos, androidRepo)
 			}
 
 			if androidL {
@@ -147,7 +148,7 @@ func (self *AndroidCrawler) FindRepos(stars int) [4][]AndroidRepository {
 	}
 
 	return [...][]AndroidRepository{
-		repos,
+		appRepos,
 		libRepos,
 		lRepos,
 		wearRepos,
