@@ -9,8 +9,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"math"
+	"net/http"
 	"os"
 	"strings"
 	"time"
@@ -140,6 +142,7 @@ func (self *AndroidCrawler) FindRepos(stars int) [4][]AndroidRepository {
 				wearRepos = append(wearRepos, androidRepo)
 			}
 
+			self.downloadAvatarImage(&repo)
 			log.Println("android:", *repo.FullName)
 			time.Sleep(time.Millisecond * 500)
 		}
@@ -153,6 +156,31 @@ func (self *AndroidCrawler) FindRepos(stars int) [4][]AndroidRepository {
 		lRepos,
 		wearRepos,
 	}
+}
+
+func (self *AndroidCrawler) downloadAvatarImage(repo *github.Repository) {
+  outDir := "images/"
+	os.Mkdir(outDir, 0755)
+
+	outPath := outDir + *repo.Owner.Login
+	out, err := os.Create(outPath)
+	defer out.Close()
+	if err != nil {
+		return
+	}
+
+	resp, err := http.Get(*repo.Owner.AvatarURL)
+	defer resp.Body.Close()
+	if err != nil {
+		return
+	}
+
+	_, err = io.Copy(out, resp.Body)
+	if err != nil {
+		return
+	}
+
+	repo.Owner.AvatarURL = &outPath
 }
 
 // isAndroid returns true if the repo has android project otherwise false.

@@ -1,5 +1,6 @@
 *.swp
 mecca
 data/
+images/
 bower_components
 node_modules
