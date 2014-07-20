@@ -1,0 +1,56 @@
+<link rel="import" href="../bower_components/core-menu/core-menu.html">
+<link rel="import" href="../bower_components/core-menu/core-submenu.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<polymer-element name="mecca-sidebar">
+<template>
+
+<style>
+paper-item.paper-selected {
+  color: red;
+}
+
+paper-ripple {
+  color: red;
+}
+
+paper-item::shadow #ripple {
+  color: #3f51b5; /* indigo color */
+}
+
+</style>
+
+<core-menu selected="0">
+  <core-submenu selected="0" icon="android" label="Android" on-core-select="{{onClickAndroid}}">
+    <paper-item label="Application"></paper-item>
+    <paper-item label="Library"></paper-item>
+    <paper-item label="Android-L"></paper-item>
+    <paper-item label="Wearable"></paper-item>
+  </core-submenu>
+  <core-submenu icon="apps" label="Source Code" on-core-select="{{onClickMecca}}">
+    <paper-item label="Crawler"></paper-item>
+    <paper-item label="Homepage"></paper-item>
+  </core-submenu>
+</core-menu>
+</template>
+
+<script>
+Polymer('mecca-sidebar', {
+  onClickAndroid: function(e, detail) {
+    if (detail.isSelected) {
+      location.href='/#Android/' + detail.item.label;
+    }
+  },
+  onClickMecca: function(e, detail) {
+    if (detail.isSelected) {
+      if (detail.item.label === 'Crawler') {
+        location.href='https://github.com/importre/mecca';
+      } else {
+        location.href='https://github.com/importre/mecca/tree/gh-pages';
+      }
+    }
+  }
+});
+</script>
+</polymer-element>

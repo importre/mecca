@@ -7,7 +7,7 @@
     "owner": {
       "login": "survivingwithandroid",
       "id": 2233394,
-      "avatar_url": "https://avatars.githubusercontent.com/u/2233394?",
+      "avatar_url": "images/survivingwithandroid",
       "html_url": "https://github.com/survivingwithandroid",
       "gravatar_id": "7ccf372f3545c1ff720758a577473a5c",
       "type": "User",
@@ -26,7 +26,7 @@
     "language": "Java",
     "fork": false,
     "forks_count": 50,
-    "open_issues_count": 6,
+    "open_issues_count": 7,
     "stargazers_count": 206,
     "watchers_count": 206,
     "size": 30897,

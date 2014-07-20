@@ -4,9 +4,10 @@
   "authors": [
     "Jaewe Heo <jaeweheo@gmail.com>"
   ],
-  "description": "Github Categorizer",
+  "description": "Collect projects on Github and Categorize.",
   "keywords": [
-    "github"
+    "github",
+    "android"
   ],
   "license": "BSD",
   "homepage": "http://importre.github.io/ghc",
@@ -20,6 +21,7 @@
   "dependencies": {
     "octicons": "*",
     "core-elements": "Polymer/core-elements#~0.3.4",
-    "paper-elements": "Polymer/paper-elements#~0.3.4"
+    "paper-elements": "Polymer/paper-elements#~0.3.4",
+    "flatiron-director": "Polymer/flatiron-director#~0.3.0"
   }
 }

@@ -1,15 +1,18 @@
-<link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="../bower_components/core-ajax/core-ajax.html">
 <link rel="import" href="../bower_components/core-selector/core-selector.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="repo-card.html">
 
 <polymer-element name="repo-list" attributes="show url" noscript>
 <template>
 
+<link rel="stylesheet" href="../bower_components/octicons/octicons/octicons.css">
 <style>
+
 :host {
   display: block;
-  width: 100%;
+  width: 80%;
 }
 repo-card {
   margin-bottom: 30px;
@@ -21,55 +24,116 @@ a:hover {color: #03A9F4; text-decoration: underline;}
 .item.core-selected {
    color: red;
 }
+
+.content {
+  font-size: 1em;
+}
+
+.empty > div {
+  margin: 5px;
+}
+
+small {
+  font-size: 0.7em;
+}
 </style>
 
-<core-ajax url="{{url}}" auto on-core-response="{{handleResponse}}"></core-ajax>
+<core-ajax url="{{url}}" auto response="{{repos}}" on-core-response="{{handleResponse}}"></core-ajax>
 
 <div layout vertical center>
 
-  <core-selector id="selector">
+  <!--
+  <core-selector id="selector" selected="0">
   <template repeat="{{repo, i in repos}}">
     <span class="item" on-click="{{onClickPage}}"> {{i + 1}} </span>
   </template>
   </core-selector>
   <br/>
+  -->
 
-  <template repeat="{{repo in repos[page]}}">
-  <repo-card hidden?="{{show == 'library' && !repo.library}}">
-  <!--<img src="../data/github.png">-->
-  <img src="{{repo.owner.avatar_url}}" width="70px" height="70px">
-  <h2>
-    <a target="about:_blank" href="{{repo.html_url}}">{{repo.full_name}}</a>
-    <small>★ ({{repo.stargazers_count}})</small>
-  </h2>
-  <p>{{repo.description}}</p>
-  <table style="width: 100%">
-    <tr>
-      <td style="width: 15%">Author</td>
-      <td><a target="about:_blank" href="{{repo.owner.html_url}}">{{repo.owner.login}}</a></td>
-    </tr>
-    <tr hidden?="{{!repo.homepage}}">
-      <td>Homepage</td>
-      <td><a target="about:_blank" href="{{repo.homepage}}">{{repo.homepage}}</a></td>
-    </tr>
-    <tr>
-      <td>Language</td>
-      <td>{{repo.language}}</td>
-    </tr>
-  </table>
-  </repo-card>
+
+  <paper-input id="search" floatingLabel label="Search" hidden?="{{repos.length == 0}}"></paper-input>
+
+  <!--<template repeat="{{repo in repos[page]}}">-->
+  <template repeat="{{repo in repos}}">
+    <repo-card hidden?="{{!repo.matched}}">
+    <img src="{{repo.owner.avatar_url}}" width="50px" height="50px">
+    <h2>
+      <a target="about:_blank" href="{{repo.html_url}}">{{repo.name}}</a>
+      <small hidden?={{!repo.fork}}>
+        <span class="octicon octicon-repo-forked"></span> forked
+      </small>
+      <small>
+        <span class="octicon octicon-star"></span> {{repo.stargazers_count}}
+      </small>
+    </h2>
+    <p class="content">{{repo.description}}</p>
+    <table class="content" style="width: 100%">
+      <tr>
+        <td style="width: 15%">Author
+
+        </td>
+        <td><a target="about:_blank" href="{{repo.owner.html_url}}">{{repo.owner.login}}</a></td>
+      </tr>
+      <tr hidden?="{{!repo.homepage}}">
+        <td>Homepage</td>
+        <td><a target="about:_blank" href="{{repo.homepage}}">Link</a></td>
+      </tr>
+      <tr>
+        <td>Language</td>
+        <td>{{repo.language}}</td>
+      </tr>
+    </table>
+    </repo-card>
   </template>
+
+  <div class="empty" vertical layout center hidden?="{{repos.length != 0}}">
+    <div class="mega-octicon octicon-radio-tower"></div>
+    <div>Sorry, No repositories so far.</div>
+    <div>:^ [</div>
+  </div>
 
 </div>
 </template>
 
 <script>
 Polymer('repo-list', {
-  perPage : 20,
+  perPage: 25,
   ready: function() {
     this.page = 0;
   },
   handleResponse: function(event, result) {
+    this.repos = result.response;
+    for (var i = 0; i < this.repos.length; i++) {
+      this.repos[i].matched = true;
+    }
+
+    var search = this.$.search;
+    search.addEventListener('input', function (e) {
+      var idx, query = search.inputValue.toLowerCase()
+      for (var i = 0; i < result.response.length; i++) {
+        idx = result.response[i].name.toLowerCase().indexOf(query);
+        if (idx >= 0) {
+          result.response[i].matched = true;
+          continue;
+        }
+
+        idx = result.response[i].description.toLowerCase().indexOf(query);
+        if (idx >= 0) {
+          result.response[i].matched = true;
+          continue;
+        }
+
+        idx = result.response[i].owner.login.toLowerCase().indexOf(query);
+        if (idx >= 0) {
+          result.response[i].matched = true;
+          continue;
+        }
+
+        result.response[i].matched = false;
+      }
+    });
+    /*
     var data = [];
     var idx = 0;
     for (var i = 0; i < result.response.length; i += this.perPage) {
@@ -78,6 +142,7 @@ Polymer('repo-list', {
       data[idx++] = result.response.slice(beg, end);
     }
     this.repos = data;
+    */
   },
   onClickPage: function(event, detail, sender) {
     this.page = parseInt(sender.innerText) - 1;
