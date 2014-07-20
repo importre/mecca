@@ -30,7 +30,7 @@ func init() {
 }
 
 func dumpAndroidRepos() {
-	android := NewAndroidCrawler()
+	android := NewAndroidCrawler(GITHUB_TOKEN)
 	reposList := android.FindRepos(*stars)
 
 	appRepos := reposList[0]

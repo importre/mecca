@@ -6,14 +6,22 @@ package main
 
 import "testing"
 
-func TestNewAndroidCrawler(t *testing.T) {
-	defer func() {
-		if r := recover(); r != nil {
-		}
-	}()
-	android := NewAndroidCrawler()
-	if android == nil {
+func TestHasLibraryLiteral(t *testing.T) {
+	var description string
+	android := NewAndroidCrawler("")
+
+	description = "LIBRARY"
+	if !android.HasLibraryLiteral(&description) {
 		t.Fail()
-		return
+	}
+
+	description = "An Asynchronous HTTP Library for Android"
+	if !android.HasLibraryLiteral(&description) {
+		t.Fail()
+	}
+
+	description = "A powerful image downloading and caching library for Android"
+	if !android.HasLibraryLiteral(&description) {
+		t.Fail()
 	}
 }

@@ -14,6 +14,7 @@ import (
 	"math"
 	"net/http"
 	"os"
+	"regexp"
 	"strings"
 	"time"
 
@@ -41,14 +42,19 @@ type AndroidRepository struct {
 }
 
 // NewAndroidCrawler returns a new AndroidCrawler.
-func NewAndroidCrawler() *AndroidCrawler {
-	if GITHUB_TOKEN == "" {
-		panic("Should set GITHUB_TOKEN in config.go")
+func NewAndroidCrawler(accessToken string) *AndroidCrawler {
+
+	if accessToken == "" {
+		log.Println("Github AccessToken is empty.")
+		return &AndroidCrawler{
+			client: github.NewClient(nil),
+		}
 	}
 
 	t := &oauth.Transport{
 		Token: &oauth.Token{AccessToken: GITHUB_TOKEN},
 	}
+
 	return &AndroidCrawler{
 		client: github.NewClient(t.Client()),
 	}
@@ -106,7 +112,7 @@ func (self *AndroidCrawler) FindRepos(stars int) [4][]AndroidRepository {
 		log.Println(msg)
 
 		for _, repo := range result.Repositories {
-			if !self.isAndroid(&repo) {
+			if !self.IsAndroid(&repo) {
 				continue
 			}
 
@@ -114,10 +120,10 @@ func (self *AndroidCrawler) FindRepos(stars int) [4][]AndroidRepository {
 			library := self.isLibrary(&repo)
 
 			// check repo if it has android-l or not
-			androidL := self.isAndroidL(&repo)
+			androidL := self.IsAndroidL(&repo)
 
 			// check wearable
-			wearable := self.isWearable(&repo)
+			wearable := self.IsWearable(&repo)
 
 			androidRepo := AndroidRepository{
 				&library,
@@ -189,8 +195,8 @@ func (self *AndroidCrawler) downloadAvatarImage(repo *github.Repository) {
 	repo.Owner.AvatarURL = &outPath
 }
 
-// isAndroid returns true if the repo has android project otherwise false.
-func (self *AndroidCrawler) isAndroid(repo *github.Repository) bool {
+// IsAndroid returns true if the repo has android project otherwise false.
+func (self *AndroidCrawler) IsAndroid(repo *github.Repository) bool {
 	opts := &github.SearchOptions{}
 
 	// I'm not sure exactly the rule is good.
@@ -199,7 +205,7 @@ func (self *AndroidCrawler) isAndroid(repo *github.Repository) bool {
 	self.sleep(response)
 
 	if err != nil {
-		log.Fatal("isAndroid:", err)
+		log.Fatal("IsAndroid:", err)
 	}
 
 	return *result.Total > 0
@@ -233,11 +239,33 @@ func (self *AndroidCrawler) isLibrary(repo *github.Repository) bool {
 		}
 	}
 
+	if self.HasLibraryLiteral(repo.Description) {
+		return true
+	}
+
 	return false
 }
 
-// isAndroidL returns true if the repo has android-l project otherwise false.
-func (self *AndroidCrawler) isAndroidL(repo *github.Repository) bool {
+func (self *AndroidCrawler) HasLibraryLiteral(str *string) bool {
+	if str == nil {
+		return false
+	}
+
+	re, err := regexp.Compile(`(?i)\blibrary\b`)
+	if err != nil {
+		return false
+	}
+
+	res := re.FindAllString(*str, 1)
+	if len(res) > 0 {
+		return true
+	}
+
+	return false
+}
+
+// IsAndroidL returns true if the repo has android-l project otherwise false.
+func (self *AndroidCrawler) IsAndroidL(repo *github.Repository) bool {
 	opts := &github.SearchOptions{}
 
 	// I'm not sure exactly the rule is good.
@@ -254,8 +282,8 @@ func (self *AndroidCrawler) isAndroidL(repo *github.Repository) bool {
 	return *result.Total > 0
 }
 
-// isWearable returns true if the repo has wearable project otherwise false.
-func (self *AndroidCrawler) isWearable(repo *github.Repository) bool {
+// IsWearable returns true if the repo has wearable project otherwise false.
+func (self *AndroidCrawler) IsWearable(repo *github.Repository) bool {
 	opts := &github.SearchOptions{}
 
 	// I'm not sure exactly the rule is good.
@@ -266,7 +294,7 @@ func (self *AndroidCrawler) isWearable(repo *github.Repository) bool {
 	self.sleep(response)
 
 	if err != nil {
-		log.Fatal("isWearable:", err)
+		log.Fatal("IsWearable:", err)
 	}
 
 	return *result.Total > 0
