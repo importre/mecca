@@ -26,9 +26,14 @@ Android repositories
 
 ### Category and Rules (Queries)
 
-#### All
+#### Android Repository
 ```
 android fork:true stars:>=<The number of stars>
+```
+
+#### Android Project
+```
+androidmanifest.xml in:path repo:<Repository Name>
 ```
 
 #### Android Library
