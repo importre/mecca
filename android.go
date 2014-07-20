@@ -159,7 +159,13 @@ func (self *AndroidCrawler) FindRepos(stars int) [4][]AndroidRepository {
 }
 
 func (self *AndroidCrawler) downloadAvatarImage(repo *github.Repository) {
-  outDir := "images/"
+	defer func() {
+		if r := recover(); r != nil {
+			log.Println("Recovered", r)
+		}
+	}()
+
+	outDir := "images/"
 	os.Mkdir(outDir, 0755)
 
 	outPath := outDir + *repo.Owner.Login
