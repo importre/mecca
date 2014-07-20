@@ -1,6 +1,7 @@
 <link rel="import" href="../bower_components/core-ajax/core-ajax.html">
 <link rel="import" href="../bower_components/core-selector/core-selector.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="../bower_components/polymer/polymer.html">
 <link rel="import" href="repo-card.html">
 
@@ -51,7 +52,7 @@ small {
   <br/>
   -->
 
-
+  <paper-toast id="toast" text="Loading {{show}}..." duration="5000" ></paper-toast>
   <paper-input id="search" floatingLabel label="Search" hidden?="{{repos.length == 0}}"></paper-input>
 
   <!--<template repeat="{{repo in repos[page]}}">-->
@@ -102,6 +103,9 @@ Polymer('repo-list', {
   ready: function() {
     this.page = 0;
   },
+  showChanged: function() {
+    this.$.toast.show();
+  },
   handleResponse: function(event, result) {
     this.repos = result.response;
     for (var i = 0; i < this.repos.length; i++) {
@@ -134,6 +138,7 @@ Polymer('repo-list', {
         result.response[i].matched = false;
       }
     });
+    this.$.toast.dismiss();
     /*
     var data = [];
     var idx = 0;
