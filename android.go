@@ -117,7 +117,7 @@ func (self *AndroidCrawler) FindRepos(stars int) [4][]AndroidRepository {
 			}
 
 			// check repo if it has library or not
-			library := self.isLibrary(&repo)
+			library := self.IsLibrary(&repo)
 
 			// check repo if it has android-l or not
 			androidL := self.IsAndroidL(&repo)
@@ -211,8 +211,8 @@ func (self *AndroidCrawler) IsAndroid(repo *github.Repository) bool {
 	return *result.Total > 0
 }
 
-// isLibrary returns true if the repo has library project otherwise false.
-func (self *AndroidCrawler) isLibrary(repo *github.Repository) bool {
+// IsLibrary returns true if the repo has library project otherwise false.
+func (self *AndroidCrawler) IsLibrary(repo *github.Repository) bool {
 	opts := &github.SearchOptions{}
 
 	// I'm not sure exactly the rule is good.
@@ -222,11 +222,12 @@ func (self *AndroidCrawler) isLibrary(repo *github.Repository) bool {
 	}
 
 	for _, query := range queries {
+		time.Sleep(time.Millisecond * 200)
 		result, response, err := self.client.Search.Code(query, opts)
 		self.sleep(response)
 
 		if err != nil {
-			log.Fatal("isLibrary:", err)
+			log.Fatal("IsLibrary:", err)
 		}
 
 		if *result.Total > 0 {
@@ -276,7 +277,7 @@ func (self *AndroidCrawler) IsAndroidL(repo *github.Repository) bool {
 	self.sleep(response)
 
 	if err != nil {
-		log.Fatal("isLibrary:", err)
+		log.Fatal("IsLibrary:", err)
 	}
 
 	return *result.Total > 0
