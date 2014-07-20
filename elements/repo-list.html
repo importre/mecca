@@ -109,6 +109,7 @@ Polymer('repo-list', {
     }
 
     var search = this.$.search;
+    search.value = '';
     search.addEventListener('input', function (e) {
       var idx, query = search.inputValue.toLowerCase()
       for (var i = 0; i < result.response.length; i++) {
