@@ -37,10 +37,13 @@ androidmanifest.xml in:path repo:<Repository Name>
 ```
 
 #### Android Library
+
 ```
 "android-library" extension:gradle language:groovy repo:<Repository Name>
 "android.library=true" language:ini repo:<Repository Name>
 ```
+
+If both are not matched, check repo's description using regex `(?i)\blibrary\b` whether it has `library` literal or not.
 
 #### Android-L
 ```
