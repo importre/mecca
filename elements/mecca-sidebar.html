@@ -39,7 +39,7 @@ paper-item::shadow #ripple {
 Polymer('mecca-sidebar', {
   onClickAndroid: function(e, detail) {
     if (detail.isSelected) {
-      location.href='#Android/' + detail.item.label;
+      location.href='./#Android-' + detail.item.label;
     }
   },
   onClickMecca: function(e, detail) {
