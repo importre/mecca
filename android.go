@@ -5,9 +5,6 @@
 package main
 
 import (
-	"bufio"
-	"bytes"
-	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -22,14 +19,14 @@ import (
 	"github.com/google/go-github/github"
 )
 
-const (
-	REMAINING_THRESHOLD = 1
-)
-
 // AndroidCrawler gathers android repositories that exist on Github and
 // dumps to json file.
 type AndroidCrawler struct {
-	client *github.Client
+	client    *github.Client
+	appRepos  []AndroidRepository
+	libRepos  []AndroidRepository
+	lRepos    []AndroidRepository
+	wearRepos []AndroidRepository
 }
 
 // AndroidRepository represents an android repository.
@@ -60,29 +57,22 @@ func NewAndroidCrawler(accessToken string) *AndroidCrawler {
 	}
 }
 
-// DumpToJson writes a json file.
-func (self *AndroidCrawler) DumpToJson(path string, repos []AndroidRepository) {
-	b, err := json.Marshal(repos)
-	if err != nil {
-		log.Fatal("DumpToJson:", err)
-	}
-
-	var buffer bytes.Buffer
-	json.Indent(&buffer, b, "", "  ")
-	writeToFile(path, buffer)
+func (self *AndroidCrawler) Dump() {
+	outDir := "data/android/"
+	os.MkdirAll(outDir, 0755)
+	DumpToJson(outDir+"app_repos.json", self.appRepos)
+	DumpToJson(outDir+"lib_repos.json", self.libRepos)
+	DumpToJson(outDir+"l_repos.json", self.lRepos)
+	DumpToJson(outDir+"wear_repos.json", self.wearRepos)
 }
 
-// FindRepos returns AndroidRepository list.
-// 0: app repositories
-// 1: library repositories
-// 2: android-l repositories
-// 3: wearable repositories
-func (self *AndroidCrawler) FindRepos(stars int) [4][]AndroidRepository {
+// FindRepos finds repositories.
+func (self *AndroidCrawler) FindRepos(stars int) {
 	capacity := 100
-	appRepos := make([]AndroidRepository, 0, capacity)  // app repos
-	libRepos := make([]AndroidRepository, 0, capacity)  // library repos
-	lRepos := make([]AndroidRepository, 0, capacity)    // android-l repos
-	wearRepos := make([]AndroidRepository, 0, capacity) // wearable repos
+	self.appRepos = make([]AndroidRepository, 0, capacity)  // app repos
+	self.libRepos = make([]AndroidRepository, 0, capacity)  // library repos
+	self.lRepos = make([]AndroidRepository, 0, capacity)    // android-l repos
+	self.wearRepos = make([]AndroidRepository, 0, capacity) // wearable repos
 
 	page := 1
 	maxPage := math.MaxInt32
@@ -99,7 +89,7 @@ func (self *AndroidCrawler) FindRepos(stars int) [4][]AndroidRepository {
 	for page <= maxPage {
 		opts.Page = page
 		result, response, err := self.client.Search.Repositories(query, opts)
-		self.sleep(response)
+		Wait(response)
 
 		if err != nil {
 			log.Fatal("FindRepos:", err)
@@ -125,6 +115,8 @@ func (self *AndroidCrawler) FindRepos(stars int) [4][]AndroidRepository {
 			// check wearable
 			wearable := self.IsWearable(&repo)
 
+			RemoveUnnecessaryFeatures(&repo)
+
 			androidRepo := AndroidRepository{
 				&library,
 				&androidL,
@@ -132,20 +124,18 @@ func (self *AndroidCrawler) FindRepos(stars int) [4][]AndroidRepository {
 				repo,
 			}
 
-			self.removeUnnecessaryFeatures(&androidRepo)
-
 			if library {
-				libRepos = append(libRepos, androidRepo)
+				self.libRepos = append(self.libRepos, androidRepo)
 			} else {
-				appRepos = append(appRepos, androidRepo)
+				self.appRepos = append(self.appRepos, androidRepo)
 			}
 
 			if androidL {
-				lRepos = append(lRepos, androidRepo)
+				self.lRepos = append(self.lRepos, androidRepo)
 			}
 
 			if wearable {
-				wearRepos = append(wearRepos, androidRepo)
+				self.wearRepos = append(self.wearRepos, androidRepo)
 			}
 
 			self.downloadAvatarImage(&repo)
@@ -154,13 +144,6 @@ func (self *AndroidCrawler) FindRepos(stars int) [4][]AndroidRepository {
 		}
 
 		page++
-	}
-
-	return [...][]AndroidRepository{
-		appRepos,
-		libRepos,
-		lRepos,
-		wearRepos,
 	}
 }
 
@@ -202,7 +185,7 @@ func (self *AndroidCrawler) IsAndroid(repo *github.Repository) bool {
 	// I'm not sure exactly the rule is good.
 	query := fmt.Sprintf("androidmanifest.xml in:path repo:%v", *repo.FullName)
 	result, response, err := self.client.Search.Code(query, opts)
-	self.sleep(response)
+	Wait(response)
 
 	if err != nil {
 		log.Fatal("IsAndroid:", err)
@@ -224,7 +207,7 @@ func (self *AndroidCrawler) IsLibrary(repo *github.Repository) bool {
 	for _, query := range queries {
 		time.Sleep(time.Millisecond * 100)
 		result, response, err := self.client.Search.Code(query, opts)
-		self.sleep(response)
+		Wait(response)
 
 		if err != nil {
 			log.Fatal("IsLibrary:", err)
@@ -274,7 +257,7 @@ func (self *AndroidCrawler) IsAndroidL(repo *github.Repository) bool {
 	query := fmt.Sprintf(format, *repo.FullName)
 
 	result, response, err := self.client.Search.Code(query, opts)
-	self.sleep(response)
+	Wait(response)
 
 	if err != nil {
 		log.Fatal("IsLibrary:", err)
@@ -292,87 +275,11 @@ func (self *AndroidCrawler) IsWearable(repo *github.Repository) bool {
 	query := fmt.Sprintf(format, *repo.FullName)
 
 	result, response, err := self.client.Search.Code(query, opts)
-	self.sleep(response)
+	Wait(response)
 
 	if err != nil {
 		log.Fatal("IsWearable:", err)
 	}
 
 	return *result.Total > 0
-}
-
-func (self *AndroidCrawler) sleep(response *github.Response) {
-	if response != nil && response.Remaining <= REMAINING_THRESHOLD {
-		gap := time.Duration(response.Reset.Local().Unix() - time.Now().Unix())
-		sleep := gap * time.Second
-		if sleep < 0 {
-			sleep = -sleep
-		}
-
-		time.Sleep(sleep)
-	}
-}
-
-func (self *AndroidCrawler) removeUnnecessaryFeatures(repo *AndroidRepository) {
-	repo.ArchiveURL = nil
-	repo.AssigneesURL = nil
-	repo.BlobsURL = nil
-	repo.BranchesURL = nil
-	repo.CloneURL = nil
-	repo.CollaboratorsURL = nil
-	repo.CommentsURL = nil
-	repo.CommitsURL = nil
-	repo.CompareURL = nil
-	repo.ContentsURL = nil
-	repo.ContributorsURL = nil
-	repo.DownloadsURL = nil
-	repo.EventsURL = nil
-	repo.ForksURL = nil
-	repo.GitCommitsURL = nil
-	repo.GitRefsURL = nil
-	repo.GitTagsURL = nil
-	repo.GitURL = nil
-	repo.HooksURL = nil
-	repo.IssueCommentURL = nil
-	repo.IssueEventsURL = nil
-	repo.IssuesURL = nil
-	repo.KeysURL = nil
-	repo.LabelsURL = nil
-	repo.LanguagesURL = nil
-	repo.MergesURL = nil
-	repo.MilestonesURL = nil
-	repo.NotificationsURL = nil
-	repo.Owner.EventsURL = nil
-	repo.Owner.FollowersURL = nil
-	repo.Owner.FollowingURL = nil
-	repo.Owner.GistsURL = nil
-	repo.Owner.OrganizationsURL = nil
-	repo.Owner.ReceivedEventsURL = nil
-	repo.Owner.ReposURL = nil
-	repo.Owner.StarredURL = nil
-	repo.Owner.SubscriptionsURL = nil
-	repo.PullsURL = nil
-	repo.ReleasesURL = nil
-	repo.SSHURL = nil
-	repo.SVNURL = nil
-	repo.StargazersURL = nil
-	repo.StatusesURL = nil
-	repo.SubscribersURL = nil
-	repo.SubscriptionURL = nil
-	repo.TagsURL = nil
-	repo.TeamsURL = nil
-	repo.TreesURL = nil
-}
-
-func writeToFile(name string, buffer bytes.Buffer) {
-	fo, err := os.Create(name)
-	if err != nil {
-		panic(err)
-	}
-
-	defer fo.Close()
-
-	w := bufio.NewWriter(fo)
-	buffer.WriteTo(w)
-	w.Flush()
 }

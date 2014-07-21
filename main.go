@@ -8,7 +8,6 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"os"
 )
 
 var (
@@ -29,30 +28,19 @@ func init() {
 	repoType = flag.String("type", DEFAULT_REPO_TYPE, helpRepoType)
 }
 
-func dumpAndroidRepos() {
-	android := NewAndroidCrawler(GITHUB_TOKEN)
-	reposList := android.FindRepos(*stars)
-
-	appRepos := reposList[0]
-	libRepos := reposList[1]
-	lRepos := reposList[2]
-	wearRepos := reposList[3]
-
-	outDir := "data"
-	os.Mkdir(outDir, 0755)
-	android.DumpToJson(outDir+"/app_repos.json", appRepos)
-	android.DumpToJson(outDir+"/lib_repos.json", libRepos)
-	android.DumpToJson(outDir+"/l_repos.json", lRepos)
-	android.DumpToJson(outDir+"/wear_repos.json", wearRepos)
-}
-
 func main() {
 	flag.Parse()
+	var crawler Crawler
 
 	switch *repoType {
 	case "android":
-		dumpAndroidRepos()
+		crawler = NewAndroidCrawler(GITHUB_TOKEN)
+	case "polymer":
+		crawler = NewPolymerCrawler(GITHUB_TOKEN)
 	default:
 		log.Fatal("Unknown repo type: ", *repoType)
 	}
+
+	crawler.FindRepos(*stars)
+	crawler.Dump()
 }

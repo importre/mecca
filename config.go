@@ -6,5 +6,6 @@ package main
 
 const (
 	// GITHUB_TOKEN is an access token of your github account
-	GITHUB_TOKEN = ""
+	GITHUB_TOKEN        = ""
+	REMAINING_THRESHOLD = 1
 )
