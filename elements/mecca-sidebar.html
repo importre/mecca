@@ -15,7 +15,10 @@ paper-item::shadow #ripple {
 </style>
 
 <core-menu selected="0">
-  <core-submenu selected="0" icon="android" label="Android" on-core-select="{{onClickAndroid}}">
+  <core-submenu selected="0" icon="polymer" label="Polymer" on-core-select="{{onClickPolymer}}">
+    <paper-item label="Polymer"></paper-item>
+  </core-submenu>
+  <core-submenu icon="android" label="Android" on-core-select="{{onClickAndroid}}">
     <paper-item label="Application"></paper-item>
     <paper-item label="Library"></paper-item>
     <paper-item label="Android-L"></paper-item>
@@ -30,6 +33,11 @@ paper-item::shadow #ripple {
 
 <script>
 Polymer('mecca-sidebar', {
+  onClickPolymer: function(e, detail) {
+    if (detail.isSelected) {
+      location.href='./#Polymer-' + detail.item.label;
+    }
+  },
   onClickAndroid: function(e, detail) {
     if (detail.isSelected) {
       location.href='./#Android-' + detail.item.label;

@@ -102,16 +102,19 @@
     routeChanged: function() {
       this.async(function() {
         if (this.route === 'Android-Library') {
-          this.url = './data/lib_repos.json';
+          this.url = './data/android/lib_repos.json';
           this.title = 'Library';
         } else if (this.route === 'Android-Android-L') {
-          this.url = './data/l_repos.json';
+          this.url = './data/android/l_repos.json';
           this.title = 'Android-L';
         } else if (this.route === 'Android-Wearable') {
-          this.url = './data/wear_repos.json';
+          this.url = './data/android/wear_repos.json';
+          this.title = 'Wearable';
+        } else if (this.route === 'Polymer-Polymer') {
+          this.url = './data/polymer/repos.json';
           this.title = 'Wearable';
         } else {
-          this.url = './data/app_repos.json';
+          this.url = './data/android/app_repos.json';
           this.title = 'Application';
         }
         this.title += ' Projects';
