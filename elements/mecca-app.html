@@ -101,21 +101,23 @@
       this.async(function() {
         if (this.route === 'Android-Library') {
           this.url = './data/android/lib_repos.json';
-          this.categoryTitle = 'Library';
+          this.categoryTitle = 'Android Library';
         } else if (this.route === 'Android-Android-L') {
           this.url = './data/android/l_repos.json';
           this.categoryTitle = 'Android-L';
         } else if (this.route === 'Android-Wearable') {
           this.url = './data/android/wear_repos.json';
-          this.categoryTitle = 'Wearable';
+          this.categoryTitle = 'Android Wearable';
+        } else if (this.route === 'Android-Application') {
+          this.url = './data/android/app_repos.json';
+          this.categoryTitle = 'Android Application';
         } else if (this.route === 'Polymer-Polymer') {
           this.url = './data/polymer/repos.json';
           this.categoryTitle = 'Polymer';
         } else {
-          this.url = './data/android/app_repos.json';
-          this.categoryTitle = 'Application';
+          this.url = null;
+          this.categoryTitle = 'null';
         }
-        this.categoryTitle += ' Projects';
         this.closeDrawer();
       }, null, 1000);
     }

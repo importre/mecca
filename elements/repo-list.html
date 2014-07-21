@@ -13,8 +13,9 @@
 
 :host {
   display: block;
-  width: 80%;
+  width: 100%;
 }
+
 repo-card {
   margin-bottom: 30px;
 }
@@ -43,7 +44,7 @@ small {
 }
 </style>
 
-<core-ajax url="{{url}}" auto response="{{repos}}" on-core-response="{{handleResponse}}"></core-ajax>
+<core-ajax url="{{url}}" auto on-core-response="{{handleResponse}}"></core-ajax>
 
 <div layout vertical center>
 
