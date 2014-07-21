@@ -1,6 +1,5 @@
 <link rel="import" href="../bower_components/core-drawer-panel/core-drawer-panel.html">
 <link rel="import" href="../bower_components/core-header-panel/core-header-panel.html">
-<link rel="import" href="../bower_components/core-scroll-header-panel/core-scroll-header-panel.html">
 <link rel="import" href="../bower_components/core-toolbar/core-toolbar.html">
 <link rel="import" href="../bower_components/flatiron-director/flatiron-director.html">
 <link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
@@ -65,13 +64,13 @@
     </div>
     
     <!-- detail -->
-    <core-scroll-header-panel id="header" main condenses keepCondensedHeader mode="{{mode}}">
+    <core-header-panel main navigation flex mode="seamed">
 
-      <core-toolbar class="tall">
+      <core-toolbar>
         <paper-icon-button id="menuButton" icon="menu" on-tap="{{togglePanel}}"></paper-icon-button>
 
        <div tool class="toolbar bottom indent">
-         <div id="title" style="font-size: 1.5em;">{{title}}</div>
+         <div id="categoryTitle">{{categoryTitle}}</div>
        </div>
       </core-toolbar>
       
@@ -79,7 +78,7 @@
         <repo-list show="{{route}}" url="{{url}}"></repo-list>
       </div>
       
-    </core-scroll-header-panel>
+    </core-header-panel>
 
   </core-drawer-panel>
 </template>
@@ -87,8 +86,7 @@
 
   Polymer('mecca-app', {
     publish: {
-      responsiveWidth: '600px',
-      mode: {value: 'seamed', reflect: true}
+      responsiveWidth: '600px'
     },
 
     togglePanel: function() {
@@ -103,33 +101,23 @@
       this.async(function() {
         if (this.route === 'Android-Library') {
           this.url = './data/android/lib_repos.json';
-          this.title = 'Library';
+          this.categoryTitle = 'Library';
         } else if (this.route === 'Android-Android-L') {
           this.url = './data/android/l_repos.json';
-          this.title = 'Android-L';
+          this.categoryTitle = 'Android-L';
         } else if (this.route === 'Android-Wearable') {
           this.url = './data/android/wear_repos.json';
-          this.title = 'Wearable';
+          this.categoryTitle = 'Wearable';
         } else if (this.route === 'Polymer-Polymer') {
           this.url = './data/polymer/repos.json';
-          this.title = 'Wearable';
+          this.categoryTitle = 'Polymer';
         } else {
           this.url = './data/android/app_repos.json';
-          this.title = 'Application';
+          this.categoryTitle = 'Application';
         }
-        this.title += ' Projects';
+        this.categoryTitle += ' Projects';
         this.closeDrawer();
       }, null, 500);
-    },
-    
-    ready: function() {
-      var titleStyle = this.$.title.style;
-      this.$.header.addEventListener('core-header-transform', function (e) {
-        var d = e.detail;
-        var m = d.height - d.condensedHeight;
-        var scale = Math.max(0.75, (m - d.y) / (m / 0.25) + 0.75);
-        titleStyle.webkitTransform = titleStyle.transform = 'scale(' + scale + ') translateZ(0)';
-      });
     }
   });
 
