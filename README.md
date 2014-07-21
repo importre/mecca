@@ -3,7 +3,7 @@ mecca
 
 Collect projects on Github and Categorize.
 
-Currently **mecca** gathers Android repositories only.
+Currently **mecca** gathers `Polymer` and `Android` repositories.
 
 
 Usage
@@ -20,24 +20,34 @@ $ ./mecca
 
 The results(JSON files) will be generated in `data` directory.
 
+Polymer repositories
+--------------------
+
+### Polymer Repository
+```
+polymer fork:true stars:>=<The number of stars>
+```
+
+### Polymer Project
+```
+"platform.js" extension:html language:html repo:<Repository Name>
+```
+
 
 Android repositories
 --------------------
 
-### Category and Rules (Queries)
-
-#### Android Repository
+### Android Repository
 ```
 android fork:true stars:>=<The number of stars>
 ```
 
-#### Android Project
+### Android Project
 ```
 androidmanifest.xml in:path repo:<Repository Name>
 ```
 
-#### Android Library
-
+### Android Library
 ```
 "android-library" extension:gradle language:groovy repo:<Repository Name>
 "android.library=true" language:ini repo:<Repository Name>
