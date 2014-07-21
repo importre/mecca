@@ -22,7 +22,7 @@ const (
 
 func init() {
 	helpStars := fmt.Sprintf("Searching repositories which have %v stars or more than", DEFAULT_STARS)
-	helpRepoType := "Supported only 'android' currently"
+	helpRepoType := "Supported 'polymer' and 'android'"
 
 	stars = flag.Int("stars", DEFAULT_STARS, helpStars)
 	repoType = flag.String("type", DEFAULT_REPO_TYPE, helpRepoType)
