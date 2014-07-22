@@ -1,62 +1,67 @@
 <link rel="import" href="../bower_components/core-menu/core-menu.html">
 <link rel="import" href="../bower_components/core-menu/core-submenu.html">
+<link rel="import" href="../bower_components/facebook-button/dist/facebook-button.html">
 <link rel="import" href="../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../bower_components/polymer/polymer.html">
 
 <polymer-element name="mecca-sidebar">
 <template>
 
-<style>
+  <style>
 
-paper-item::shadow #ripple {
-  color: #3f51b5; /* indigo color */
-}
+    paper-item::shadow #ripple {
+      color: #3f51b5; /* indigo color */
+    }
 
-</style>
+  </style>
 
-<core-menu selected="0">
-  <core-submenu selected="0" icon="polymer" label="Polymer" on-core-select="{{onClickPolymer}}">
-    <paper-item label="Polymer"></paper-item>
-  </core-submenu>
-  <core-submenu icon="android" label="Android" on-core-select="{{onClickAndroid}}">
-    <paper-item label="Application"></paper-item>
-    <paper-item label="Library"></paper-item>
-    <paper-item label="Android-L"></paper-item>
-    <paper-item label="Wearable"></paper-item>
-  </core-submenu>
-  <core-submenu icon="apps" label="Fork me" on-core-select="{{onClickMecca}}">
-    <paper-item label="Crawler"></paper-item>
-    <paper-item label="Homepage"></paper-item>
-  </core-submenu>
-</core-menu>
-<core-menu>
-  <core-item>
-    <iframe src="//www.facebook.com/plugins/like.php?locale=en_US&amp;href=http%3A%2F%2Fimportre.github.io%2Fmecca&amp;width&amp;layout=button_count&amp;action=like&amp;show_faces=true&amp;share=true&amp;height=21&amp;appId=566988093366283" scrolling="no" frameborder="0" style="border:none; overflow:hidden; height:21px;" allowTransparency="true"></iframe>
-  </core-item>
-</core-menu>
+  <core-menu selected="0">
+    <core-submenu selected="0" icon="polymer" label="Polymer" on-core-select="{{onClickPolymer}}">
+      <paper-item label="Polymer"></paper-item>
+    </core-submenu>
+
+    <core-submenu icon="android" label="Android" on-core-select="{{onClickAndroid}}">
+      <paper-item label="Application"></paper-item>
+      <paper-item label="Library"></paper-item>
+      <paper-item label="Android-L"></paper-item>
+      <paper-item label="Wearable"></paper-item>
+    </core-submenu>
+
+    <core-submenu icon="apps" label="Fork me" on-core-select="{{onClickMecca}}">
+      <paper-item label="Crawler"></paper-item>
+      <paper-item label="Homepage"></paper-item>
+    </core-submenu>
+  </core-menu>
+
+  <core-menu>
+    <core-item>
+      <facebook-button href="{{meccaHome}}"></facebook-button>
+    </core-item>
+  </core-menu>
 </template>
 
 <script>
-Polymer('mecca-sidebar', {
-  onClickPolymer: function(e, detail) {
-    if (detail.isSelected) {
-      location.href='./#Polymer-' + detail.item.label;
-    }
-  },
-  onClickAndroid: function(e, detail) {
-    if (detail.isSelected) {
-      location.href='./#Android-' + detail.item.label;
-    }
-  },
-  onClickMecca: function(e, detail) {
-    if (detail.isSelected) {
-      if (detail.item.label === 'Crawler') {
-        location.href='https://github.com/importre/mecca';
-      } else {
-        location.href='https://github.com/importre/mecca/tree/gh-pages';
+  Polymer('mecca-sidebar', {
+    meccaHome: 'http://importre.github.io/mecca',
+    onClickPolymer: function(e, detail) {
+      if (detail.isSelected) {
+        location.href='./#Polymer-' + detail.item.label;
+      }
+    },
+    onClickAndroid: function(e, detail) {
+      if (detail.isSelected) {
+        location.href='./#Android-' + detail.item.label;
+      }
+    },
+    onClickMecca: function(e, detail) {
+      if (detail.isSelected) {
+        if (detail.item.label === 'Crawler') {
+          location.href='https://github.com/importre/mecca';
+        } else {
+          location.href='https://github.com/importre/mecca/tree/gh-pages';
+        }
       }
     }
-  }
-});
+  });
 </script>
 </polymer-element>

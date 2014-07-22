@@ -20,16 +20,16 @@
       background-color: #fff;
       box-shadow: 1px 0 1px rgba(0, 0, 0, 0.1);
     }
-    
+
     [main] {
       height: 100%;
       background-color: #eee;
     }
-    
+
     [content] {
       margin: 50px;
     }
-    
+
     core-toolbar {
       background-color: #3f51b5; /* indigo color */
       color: white;
@@ -39,7 +39,7 @@
       background-color: white;
       color: black;
     }
-    
+
     #drawerPanel:not([narrow]) #menuButton {
       display: none;
     }
@@ -51,34 +51,34 @@
 
   <core-drawer-panel id="drawerPanel" narrow="{{narrow}}" responsiveWidth="{{responsiveWidth}}">
 
-    <!-- drawer menu -->
-    <div vertical layout drawer>
+  <!-- drawer menu -->
+  <div vertical layout drawer>
 
-      <core-header-panel navigation flex mode="seamed">
-        <core-toolbar class="sidebar">
-          <span class="mega-octicon octicon-octoface"></span> MECCA
-        </core-toolbar>
-        <mecca-sidebar />
-      </core-header-panel>
-
-    </div>
-    
-    <!-- detail -->
-    <core-header-panel main navigation flex mode="seamed">
-
-      <core-toolbar>
-        <paper-icon-button id="menuButton" icon="menu" on-tap="{{togglePanel}}"></paper-icon-button>
-
-       <div tool class="toolbar bottom indent">
-         <div id="categoryTitle">{{categoryTitle}}</div>
-       </div>
-      </core-toolbar>
-      
-      <div content horizontal center-justified layout>
-        <repo-list show="{{route}}" url="{{url}}"></repo-list>
-      </div>
-      
+    <core-header-panel navigation flex mode="seamed">
+    <core-toolbar class="sidebar">
+    <span class="mega-octicon octicon-octoface"></span> MECCA
+    </core-toolbar>
+    <mecca-sidebar />
     </core-header-panel>
+
+  </div>
+
+  <!-- detail -->
+  <core-header-panel main navigation flex mode="seamed">
+
+  <core-toolbar>
+  <paper-icon-button id="menuButton" icon="menu" on-tap="{{togglePanel}}"></paper-icon-button>
+
+  <div tool class="toolbar bottom indent">
+    <div id="categoryTitle">{{categoryTitle}}</div>
+  </div>
+  </core-toolbar>
+
+  <div content horizontal center-justified layout>
+    <repo-list show="{{route}}" url="{{url}}"></repo-list>
+  </div>
+
+  </core-header-panel>
 
   </core-drawer-panel>
 </template>
