@@ -1,0 +1,24 @@
+<link rel="import" href="../bower_components/core-ajax/core-ajax.html">
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<polymer-element name="mecca-metadata">
+
+<template>
+  <style>
+    :host {
+      display: block;
+    }
+  </style>
+  <core-ajax url="../data/metadata.json" auto on-core-response="{{handleResponse}}"></core-ajax>
+  <small><b>Last-modified</b><br/>{{metadata.last_modified}}</small>
+</template>
+
+<script>
+  Polymer('mecca-metadata', {
+    handleResponse: function(event, result) {
+      this.metadata = result.response;
+    }
+  });
+</script>
+
+</polymer-element>
