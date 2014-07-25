@@ -4374,73 +4374,6 @@ Example:
   </script>
 </polymer-element>
 
-
-
-
-
-
-
-<polymer-element name="mecca-sidebar" assetpath="../app/elements/">
-<template>
-  <style>
-
-    paper-item::shadow #ripple {
-      color: #3f51b5; /* indigo color */
-    }
-
-  </style>
-
-  <core-menu selected="0">
-    <core-submenu selected="0" icon="polymer" label="Polymer" on-core-select="{{onClickPolymer}}">
-      <paper-item label="Polymer"></paper-item>
-    </core-submenu>
-
-    <core-submenu icon="android" label="Android" on-core-select="{{onClickAndroid}}">
-      <paper-item label="Application"></paper-item>
-      <paper-item label="Library"></paper-item>
-      <paper-item label="Android-L"></paper-item>
-      <paper-item label="Wearable"></paper-item>
-    </core-submenu>
-
-    <core-submenu icon="apps" label="Fork me" on-core-select="{{onClickMecca}}">
-      <paper-item label="Crawler"></paper-item>
-      <paper-item label="Homepage"></paper-item>
-    </core-submenu>
-  </core-menu>
-
-  <core-menu>
-    <core-item>
-      <facebook-button href="{{meccaHome}}"></facebook-button>
-    </core-item>
-  </core-menu>
-</template>
-
-<script>
-  Polymer('mecca-sidebar', {
-    meccaHome: 'http://importre.github.io/mecca',
-    onClickPolymer: function(e, detail) {
-      if (detail.isSelected) {
-        location.href='./#Polymer-' + detail.item.label;
-      }
-    },
-    onClickAndroid: function(e, detail) {
-      if (detail.isSelected) {
-        location.href='./#Android-' + detail.item.label;
-      }
-    },
-    onClickMecca: function(e, detail) {
-      if (detail.isSelected) {
-        if (detail.item.label === 'Crawler') {
-          location.href='https://github.com/importre/mecca';
-        } else {
-          location.href='https://github.com/importre/mecca-page';
-        }
-      }
-    }
-  });
-</script>
-</polymer-element>
-
 <!--
 Copyright (c) 2014 The Polymer Project Authors. All rights reserved.
 This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
@@ -4875,6 +4808,109 @@ element.
 
   });
 
+</script>
+</polymer-element>
+
+
+
+
+<polymer-element name="mecca-metadata" assetpath="../app/elements/">
+
+<template>
+  <style>
+    :host {
+      display: block;
+    }
+  </style>
+  <core-ajax url="../data/metadata.json" auto="" on-core-response="{{handleResponse}}"></core-ajax>
+  <small><b>Last-modified</b><br>{{metadata.last_modified}}</small>
+</template>
+
+<script>
+  Polymer('mecca-metadata', {
+    handleResponse: function(event, result) {
+      this.metadata = result.response;
+    }
+  });
+</script>
+
+</polymer-element>
+
+
+
+
+
+
+
+
+<polymer-element name="mecca-sidebar" assetpath="../app/elements/">
+<template>
+  <style>
+
+    paper-item::shadow #ripple {
+      color: #3f51b5; /* indigo color */
+    }
+
+    .mecca-item {
+      display: block;
+      position: relative;
+      min-height: 36px;
+      padding: 0 12px;
+    }
+
+  </style>
+
+  <core-menu selected="0">
+    <core-submenu selected="0" icon="polymer" label="Polymer" on-core-select="{{onClickPolymer}}">
+      <paper-item label="Polymer"></paper-item>
+    </core-submenu>
+
+    <core-submenu icon="android" label="Android" on-core-select="{{onClickAndroid}}">
+      <paper-item label="Application"></paper-item>
+      <paper-item label="Library"></paper-item>
+      <paper-item label="Android-L"></paper-item>
+      <paper-item label="Wearable"></paper-item>
+    </core-submenu>
+
+    <core-submenu icon="apps" label="Fork me" on-core-select="{{onClickMecca}}">
+      <paper-item label="Crawler"></paper-item>
+      <paper-item label="Homepage"></paper-item>
+    </core-submenu>
+  </core-menu>
+
+  <core-menu>
+    <div vertical="" center-justified="" layout="" class="mecca-item">
+      <mecca-metadata></mecca-metadata>
+    </div>
+    <div vertical="" center-justified="" layout="" class="mecca-item">
+      <facebook-button href="{{meccaHome}}"></facebook-button>
+    </div>
+  </core-menu>
+</template>
+
+<script>
+  Polymer('mecca-sidebar', {
+    meccaHome: 'http://importre.github.io/mecca',
+    onClickPolymer: function(e, detail) {
+      if (detail.isSelected) {
+        location.href='./#Polymer-' + detail.item.label;
+      }
+    },
+    onClickAndroid: function(e, detail) {
+      if (detail.isSelected) {
+        location.href='./#Android-' + detail.item.label;
+      }
+    },
+    onClickMecca: function(e, detail) {
+      if (detail.isSelected) {
+        if (detail.item.label === 'Crawler') {
+          location.href='https://github.com/importre/mecca';
+        } else {
+          location.href='https://github.com/importre/mecca-page';
+        }
+      }
+    }
+  });
 </script>
 </polymer-element>
 
