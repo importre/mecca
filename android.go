@@ -40,7 +40,6 @@ type AndroidRepository struct {
 
 // NewAndroidCrawler returns a new AndroidCrawler.
 func NewAndroidCrawler(accessToken string) *AndroidCrawler {
-
 	if accessToken == "" {
 		log.Println("Github AccessToken is empty.")
 		return &AndroidCrawler{

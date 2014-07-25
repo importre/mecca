@@ -32,7 +32,6 @@ type PolymerRepository struct {
 
 // NewPolymerCrawler returns a new PolymerCrawler.
 func NewPolymerCrawler(accessToken string) *PolymerCrawler {
-
 	if accessToken == "" {
 		log.Println("Github AccessToken is empty.")
 		return &PolymerCrawler{

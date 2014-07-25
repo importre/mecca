@@ -43,4 +43,5 @@ func main() {
 
 	crawler.FindRepos(*stars)
 	crawler.Dump()
+	NewMetaData().Dump()
 }
